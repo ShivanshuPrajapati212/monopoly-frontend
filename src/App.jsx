@@ -6,7 +6,7 @@ import GamePage from "./screens/GamePage";
 function App() {
 
   return (
-    <div className="min-h-screen bg-[#012850] text-white">
+    <div className="min-h-screen bg-[#012850] text-white flex flex-col items-center">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage/>} />
