@@ -11,7 +11,7 @@ const Board = ({ socket, started, board }) => {
           {board
             ?.slice(21, 30) // take elements 1..9
             .map((element, idx) => (
-              <SmallCard key={element.id ?? idx}>{element.name}</SmallCard>
+              <SmallCard key={element.id ?? idx} colorFace={'-bottom-[20%] w-full h-[20%]'} cost={element.cost} color={element.color}>{element.name}</SmallCard>
             ))}
         </div>
         <BigCard>{board[30]?.name}</BigCard>
@@ -22,7 +22,7 @@ const Board = ({ socket, started, board }) => {
             ?.slice(11, 20) // take elements 1..9
             .reverse()
             .map((element, idx) => (
-              <SmallCard className="!h-20 !w-28" key={element.id ?? idx}>
+              <SmallCard className="!h-20 !w-28" key={element.id ?? idx} colorFace={'-right-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color}>
                 {element.name}
               </SmallCard>
             ))}
@@ -31,7 +31,7 @@ const Board = ({ socket, started, board }) => {
           {board
             ?.slice(31, 40) // take elements 1..9
             .map((element, idx) => (
-              <SmallCard className="!h-20 !w-28" key={element.id ?? idx}>
+              <SmallCard className="!h-20 !w-28" key={element.id ?? idx} colorFace={'-left-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color}>
                 {element.name}
               </SmallCard>
             ))}
@@ -45,7 +45,7 @@ const Board = ({ socket, started, board }) => {
             ?.slice(1, 10) // take elements 1..9
             .reverse() // reverse them
             .map((element, idx) => (
-              <SmallCard key={element.id ?? idx}>{element.name}</SmallCard>
+              <SmallCard key={element.id ?? idx} colorFace={'-top-[20%] w-full h-[20%]'} color={element.color} cost={element.cost}>{element.name}</SmallCard>
             ))}
         </div>
         <BigCard>{board[0]?.name}</BigCard>
