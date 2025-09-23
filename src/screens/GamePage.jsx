@@ -1,66 +1,59 @@
 import SmallCard from "../components/SmallCard";
 import BigCard from "../components/BigCard";
+import Board from "../components/Board";
+import Sidebar from "../components/Sidebar";
+import { GAME_OVER, GET_BOARD, INIT_GAME, MOVE } from "../utils/messages";
+import { useSocket } from "../hooks/useSocket.js";
+import { useEffect, useState } from "react";
 
 const GamePage = () => {
-  return (
-    <div>
-      <div className="flex flex-col items-center container max-w-max">
-        <div className="flex w-full">
-          <BigCard>Free Parking</BigCard>
-          <div className="grid grid-flow-col grid-cols-9">
-            <SmallCard>1</SmallCard>
-            <SmallCard>2</SmallCard>
-            <SmallCard>3</SmallCard>
-            <SmallCard>4</SmallCard>
-            <SmallCard>5</SmallCard>
-            <SmallCard>6</SmallCard>
-            <SmallCard>7</SmallCard>
-            <SmallCard>8</SmallCard>
-            <SmallCard>9</SmallCard>
-          </div>
-          <BigCard>Go to Jail</BigCard>
-        </div>
-        <div className="flex flex-row justify-between w-full">
-          <div className="flex flex-col">
-            <SmallCard className="!h-20 !w-28 ">1</SmallCard>
-            <SmallCard className="!h-20 !w-28">2</SmallCard>
-            <SmallCard className="!h-20 !w-28">3</SmallCard>
-            <SmallCard className="!h-20 !w-28">4</SmallCard>
-            <SmallCard className="!h-20 !w-28">5</SmallCard>
-            <SmallCard className="!h-20 !w-28">6</SmallCard>
-            <SmallCard className="!h-20 !w-28">7</SmallCard>
-            <SmallCard className="!h-20 !w-28">8</SmallCard>
-            <SmallCard className="!h-20 !w-28">9</SmallCard>
-          </div>
-          <div className="flex flex-col">
-            <SmallCard className="!h-20 !w-28 ">1</SmallCard>
-            <SmallCard className="!h-20 !w-28">2</SmallCard>
-            <SmallCard className="!h-20 !w-28">3</SmallCard>
-            <SmallCard className="!h-20 !w-28">4</SmallCard>
-            <SmallCard className="!h-20 !w-28">5</SmallCard>
-            <SmallCard className="!h-20 !w-28">6</SmallCard>
-            <SmallCard className="!h-20 !w-28">7</SmallCard>
-            <SmallCard className="!h-20 !w-28">8</SmallCard>
-            <SmallCard className="!h-20 !w-28">9</SmallCard>
-          </div>
-        </div>
+  const socket = useSocket();
 
-        <div className="flex w-full">
-          <BigCard>Free Parking</BigCard>
-          <div className="grid grid-flow-col grid-cols-9">
-            <SmallCard>1</SmallCard>
-            <SmallCard>2</SmallCard>
-            <SmallCard>3</SmallCard>
-            <SmallCard>4</SmallCard>
-            <SmallCard>5</SmallCard>
-            <SmallCard>6</SmallCard>
-            <SmallCard>7</SmallCard>
-            <SmallCard>8</SmallCard>
-            <SmallCard>9</SmallCard>
-          </div>
-          <BigCard>Go to Jail</BigCard>
-        </div>
-      </div>
+   const [started, setStarted] = useState(false)
+   const [board, setBoard] = useState([])
+   
+   useEffect(() => {
+        if (!socket) {
+            return;
+        }
+        const handler = (event) => {
+          const message = JSON.parse(event.data);
+
+          switch (message.type) {
+            case INIT_GAME:
+              setStarted(true);
+              socket.send(JSON.stringify({ type: GET_BOARD }));
+              console.log("connected");
+              break;
+            case MOVE:
+              console.log("Move made");
+              break;
+            case GET_BOARD:
+              // set the real payload instead of "hi"
+              setBoard(message.payload);
+              console.log("received board payload:", message.payload);
+              break;
+            case GAME_OVER:
+                console.log("Game over");
+                break;
+          }
+        };
+
+        socket.addEventListener("message", handler);
+        return () => socket.removeEventListener("message", handler);
+    }, [socket]);
+
+    // log when board actually updates
+    useEffect(() => {
+      console.log("board updated:", board);
+    }, [board]);
+
+  return (
+    <div className="flex justify-between w-full p-1">
+      {started && <div className=" w-[80%] flex items-center justify-center">
+        <Board socket={socket} started={started} board={board}/>
+      </div> }
+      <Sidebar socket={socket} started={started}/>
     </div>
   );
 };
