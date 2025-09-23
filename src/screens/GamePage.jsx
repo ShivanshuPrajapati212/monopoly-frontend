@@ -2,7 +2,7 @@ import SmallCard from "../components/SmallCard";
 import BigCard from "../components/BigCard";
 import Board from "../components/Board";
 import Sidebar from "../components/Sidebar";
-import { GAME_OVER, GET_BOARD, INIT_GAME, MOVE } from "../utils/messages";
+import { GAME_OVER, GET_BOARD, GET_PLAYERS, INIT_GAME, INVALID, MOVE } from "../utils/messages";
 import { useSocket } from "../hooks/useSocket.js";
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,7 @@ const GamePage = () => {
 
    const [started, setStarted] = useState(false)
    const [board, setBoard] = useState([])
+  const [players, setPlayers] = useState([])
    
    useEffect(() => {
         if (!socket) {
@@ -23,18 +24,38 @@ const GamePage = () => {
             case INIT_GAME:
               setStarted(true);
               socket.send(JSON.stringify({ type: GET_BOARD }));
+              socket.send(JSON.stringify({ type: GET_PLAYERS }));
               console.log("connected");
               break;
             case MOVE:
-              console.log("Move made");
+              console.log("Move made", message.payload);
+
+              // update players immutably using functional setState (no stale closure)
+              setPlayers((prev) => {
+                if (!Array.isArray(prev)) return prev;
+                const idx = prev.findIndex((p) => p.name === message.payload.name);
+                if (idx === -1) return prev; // player not found
+
+                const updated = [...prev];
+                updated[idx] = { ...updated[idx], position: message.payload.position };
+                return updated;
+              });
               break;
             case GET_BOARD:
               // set the real payload instead of "hi"
               setBoard(message.payload);
               console.log("received board payload:", message.payload);
               break;
+            case GET_PLAYERS:
+              // set the real payload instead of "hi"
+              setPlayers(message.payload);
+              console.log("received players payload:", message.payload);
+              break;
             case GAME_OVER:
                 console.log("Game over");
+                break;
+            case INVALID:
+                console.log("Invalid move, ", message.payload);
                 break;
           }
         };
@@ -46,12 +67,13 @@ const GamePage = () => {
     // log when board actually updates
     useEffect(() => {
       console.log("board updated:", board);
-    }, [board]);
+      console.log("players updated:", players);
+    }, [board, players]);
 
   return (
     <div className="flex justify-between w-full p-1">
-      {started && <div className=" w-[80%] flex items-center justify-center">
-        <Board socket={socket} started={started} board={board}/>
+      {started && players && <div className=" w-[80%] flex items-center justify-center">
+        <Board socket={socket} started={started} board={board} players={players}/>
       </div> }
       <Sidebar socket={socket} started={started}/>
     </div>

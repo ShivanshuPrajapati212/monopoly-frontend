@@ -1,6 +1,6 @@
 import React from "react";
 import { useSocket } from "../hooks/useSocket";
-import { INIT_GAME } from "../utils/messages";
+import { INIT_GAME, ROLL } from "../utils/messages";
 
 const Sidebar = ({ socket, started }) => {
   return (
@@ -19,6 +19,15 @@ const Sidebar = ({ socket, started }) => {
           Start Game
         </button>
       )}
+      {
+        started && <button onClick={() => {
+            socket.send(
+              JSON.stringify({
+                type: ROLL,
+              })
+            );
+          }} className="btn">Roll</button>
+      }
     </div>
   );
 };
