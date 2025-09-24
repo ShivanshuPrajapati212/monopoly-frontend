@@ -46,7 +46,7 @@ const Sidebar = ({ socket, started, board, players, self }) => {
           // render only when card is buyable
           return !nonBuyable.includes(card.id) ? (
             <div className="border-2 border-gray-400 p-5">
-              <div className={`${card.color} w-full p-2 px-10`}>
+              <div className={`${card.color} w-full p-2 px-14`}>
                 <div className="text-center text-xl font-semibold">
                   {card.name}
                 </div>
@@ -67,7 +67,7 @@ const Sidebar = ({ socket, started, board, players, self }) => {
               <div className="text-center text-lg mt-3">With Hotel ${card.rents[5]}</div>
               <div className="text-center text-lg mt-1">Houses cost ${card.cost[1]} each</div>
               <div className="text-center text-lg mt-1">Hotels, ${card.cost[1]} Plus 4 houses</div>
-              <div className="text-center text-lg mt-1">Mortgage Value ${card.cost[0]/2}</div>
+              <div className="text-center text-lg mt-1">Mortgage/Sell Value ${card.cost[0]/2}</div>
             </div>
           ) : null;
         })()}
