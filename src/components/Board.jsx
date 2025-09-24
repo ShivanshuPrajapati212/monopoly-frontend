@@ -6,7 +6,7 @@ const Board = ({ socket, started, board, players }) => {
   return (
     <div className={`flex flex-col items-center container max-w-max text-xs text-center`}>
       <div className="flex w-full">
-        <BigCard color={'bg-gray-800'} players={players}>{board[20]?.name}</BigCard>
+        <BigCard key={20} color={'bg-gray-800'} players={players}>{board[20]?.name}</BigCard>
         <div className="grid grid-flow-col grid-cols-9">
           {board
             ?.slice(21, 30) // take elements 1..9
@@ -14,7 +14,7 @@ const Board = ({ socket, started, board, players }) => {
               <SmallCard key={element.id ?? idx} players={players} index={element.id} colorFace={'-bottom-[20%] w-full h-[20%]'} cost={element.cost} color={element.color} ownership={element.ownership}>{element.name}</SmallCard>
             ))}
         </div>
-        <BigCard color={"bg-gray-800"} players={players}>{board[30]?.name}</BigCard>
+        <BigCard key={30} color={"bg-gray-800"} players={players}>{board[30]?.name}</BigCard>
       </div>
       <div className="flex flex-row justify-between w-full">
         <div className="flex flex-col">
@@ -39,7 +39,7 @@ const Board = ({ socket, started, board, players }) => {
       </div>
 
       <div className="flex w-full">
-        <BigCard color={'bg-gray-800'} players={players}>{board[10]?.name}</BigCard>
+        <BigCard key={10} color={'bg-gray-800'} players={players}>{board[10]?.name}</BigCard>
         <div className="grid grid-flow-col grid-cols-9">
           {board
             ?.slice(1, 10) // take elements 1..9
@@ -48,7 +48,7 @@ const Board = ({ socket, started, board, players }) => {
               <SmallCard key={idx} players={players} index={element.id} colorFace={'-top-[20%] w-full h-[20%]'} color={element.color} cost={element.cost} ownership={element.ownership}>{element.name}</SmallCard>
             ))}
         </div>
-        <BigCard color={'bg-green-600'} index={0} players={players}>{board[0]?.name}</BigCard>
+        <BigCard key={0} color={'bg-green-600'} index={0} players={players}>{board[0]?.name}</BigCard>
       </div>
     </div>
   );

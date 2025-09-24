@@ -5,7 +5,7 @@ const BigCard = ({children, color, players, index}) => {
     <div className={`${color} w-28 h-28 border-2 border-black`}>
         {children}
         {
-          players.map((e) => e.position===index?<p>{e.name}</p>:'')
+          players.map((e) => e.position===index?<p key={e.name}>{e.name}</p>:'')
         }
     </div>
   )
