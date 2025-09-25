@@ -2,7 +2,7 @@ import SmallCard from "../components/SmallCard";
 import BigCard from "../components/BigCard";
 import Board from "../components/Board";
 import Sidebar from "../components/Sidebar";
-import { GAME_OVER, GET_BOARD, GET_PLAYERS, GET_SELF, INIT_GAME, INVALID, MOVE, PAY, RECEIVE, RENT } from "../utils/messages";
+import { BUY, GAME_OVER, GET_BOARD, GET_PLAYERS, GET_SELF, INIT_GAME, INVALID, MOVE, PAY, RECEIVE, RENT } from "../utils/messages";
 import { useSocket } from "../hooks/useSocket.js";
 import { useEffect, useState } from "react";
 
@@ -40,6 +40,31 @@ const GamePage = () => {
 
                 const updated = [...prev];
                 updated[idx] = { ...updated[idx], position: message.payload.position };
+                return updated;
+              });
+              break;
+            
+            case BUY:
+              if(message.type === INVALID) {
+                console.log(message)
+                break;
+              }
+              setBoard((prev) => {
+                if (!Array.isArray(prev)) return prev;
+                const idx = prev.findIndex((p) => p.id === message.payload.changeInBoard.id);
+                if (idx === -1) return prev; // player not found
+
+                const updated = [...prev];
+                updated[idx] = message.payload.changeInBoard;
+                return updated;
+              });
+              setPlayers((prev) => {
+                if (!Array.isArray(prev)) return prev;
+                const idx = prev.findIndex((p) => p.name === message.payload.player);
+                if (idx === -1) return prev; // player not found
+
+                const updated = [...prev];
+                updated[idx] = { ...updated[idx], money:  updated[idx].money - message.payload.cost};
                 return updated;
               });
               break;
