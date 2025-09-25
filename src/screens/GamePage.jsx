@@ -12,6 +12,7 @@ const GamePage = () => {
    const [started, setStarted] = useState(false)
    const [board, setBoard] = useState([])
   const [players, setPlayers] = useState([])
+  const [roll, setRoll] = useState([1,1])
   const [self, setSelf] = useState()
    
    useEffect(() => {
@@ -42,6 +43,7 @@ const GamePage = () => {
                 updated[idx] = { ...updated[idx], position: message.payload.position };
                 return updated;
               });
+              setRoll(message.payload.roll)
               break;
             
             case BUY:
@@ -145,7 +147,7 @@ const GamePage = () => {
       {started && players && <div className=" w-[80%] flex items-center justify-center">
         <Board socket={socket} started={started} board={board} players={players}/>
       </div> }
-      <Sidebar socket={socket} started={started} board={board} players={players} self={self}/>
+      <Sidebar socket={socket} started={started} board={board} players={players} self={self} roll={roll}/>
     </div>
   );
 };

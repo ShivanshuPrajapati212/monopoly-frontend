@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useSocket } from "../hooks/useSocket";
 import { BUY, INIT_GAME, ROLL } from "../utils/messages";
+import Dice from "./Dice";
 
-const Sidebar = ({ socket, started, board, players, self }) => {
+const Sidebar = ({ socket, started, board, players, self, roll }) => {
   const nonBuyable = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
   const [selected, setSelected] = useState(0);
   return (
@@ -129,18 +129,7 @@ const Sidebar = ({ socket, started, board, players, self }) => {
           ) : null;
         })()}
       {started && (
-        <button
-          onClick={() => {
-            socket.send(
-              JSON.stringify({
-                type: ROLL,
-              })
-            );
-          }}
-          className="btn"
-        >
-          Roll
-        </button>
+        <Dice socket={socket} roll={roll}/>
       )}
     </div>
   );
