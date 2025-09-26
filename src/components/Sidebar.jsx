@@ -6,7 +6,7 @@ const Sidebar = ({ socket, started, board, players, self, roll, isRolling, setIs
   const nonBuyable = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
   const [selected, setSelected] = useState(0);
   return (
-    <div className="flex flex-col items-center justify-between py-5 w-[30%] bg-[#001b36]">
+    <div className="flex flex-col items-center justify-between py-5 lg:w-[30%] bg-[#001b36]">
       {!started && (
         <button
           onClick={() => {

@@ -22,7 +22,7 @@ const Board = ({ socket, started, board, players }) => {
             ?.slice(11, 20) // take elements 1..9
             .reverse()
             .map((element, idx) => (
-              <SmallCard className="!h-20 !w-28" players={players} index={element.id} key={element.id ?? idx} colorFace={'-right-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color} ownership={element.ownership}>
+              <SmallCard className="lg:!h-20 lg:!w-28" players={players} index={element.id} key={element.id ?? idx} colorFace={'-right-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color} ownership={element.ownership}>
                 {element.name}
               </SmallCard>
             ))}
@@ -31,7 +31,7 @@ const Board = ({ socket, started, board, players }) => {
           {board
             ?.slice(31, 40) // take elements 1..9
             .map((element, idx) => (
-              <SmallCard className="!h-20 !w-28" players={players} index={element.id} key={element.id ?? idx} colorFace={'-left-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color} ownership={element.ownership}>
+              <SmallCard className="lg:!h-20 lg:!w-28" players={players} index={element.id} key={element.id ?? idx} colorFace={'-left-[20%] w-[20%] h-full top-0'} cost={element.cost} color={element.color} ownership={element.ownership}>
                 {element.name}
               </SmallCard>
             ))}

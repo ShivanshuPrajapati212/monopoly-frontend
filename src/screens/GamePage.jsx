@@ -165,8 +165,8 @@ const GamePage = () => {
     }, [board, players]);
 
   return (
-    <div className="flex justify-between w-full p-1">
-      {started && players && <div className=" w-[80%] flex items-center justify-center">
+    <div className="flex max-lg:flex-col justify-between w-full p-1">
+      {started && players && <div className=" lg:w-[80%] flex items-center justify-center w-max">
         <Board socket={socket} started={started} board={board} players={players}/>
       </div> }
       <Sidebar
