@@ -14,7 +14,25 @@ const GamePage = () => {
   const [players, setPlayers] = useState([])
   const [roll, setRoll] = useState([1,1])
   const [self, setSelf] = useState()
-   
+
+  // new: track whether dice animation is in progress and buffer moves
+  const [isRolling, setIsRolling] = useState(false);
+  const [pendingMoves, setPendingMoves] = useState([]);
+
+  // helper to apply a move payload (used both for immediate and buffered moves)
+  const applyMovePayload = (payload) => {
+    setPlayers((prev) => {
+      if (!Array.isArray(prev)) return prev;
+      const idx = prev.findIndex((p) => p.name === payload.name);
+      if (idx === -1) return prev; // player not found
+
+      const updated = [...prev];
+      updated[idx] = { ...updated[idx], position: payload.position };
+      return updated;
+    });
+    setRoll(payload.roll);
+  };
+
    useEffect(() => {
         if (!socket) {
             return;
@@ -33,17 +51,12 @@ const GamePage = () => {
             case MOVE:
               console.log("Move made", message.payload);
 
-              // update players immutably using functional setState (no stale closure)
-              setPlayers((prev) => {
-                if (!Array.isArray(prev)) return prev;
-                const idx = prev.findIndex((p) => p.name === message.payload.name);
-                if (idx === -1) return prev; // player not found
-
-                const updated = [...prev];
-                updated[idx] = { ...updated[idx], position: message.payload.position };
-                return updated;
-              });
-              setRoll(message.payload.roll)
+              // if dice animation is in progress, buffer the move(s)
+              if (isRolling) {
+                setPendingMoves((prev) => [...prev, message.payload]);
+              } else {
+                applyMovePayload(message.payload);
+              }
               break;
             
             case BUY:
@@ -134,7 +147,16 @@ const GamePage = () => {
 
         socket.addEventListener("message", handler);
         return () => socket.removeEventListener("message", handler);
-    }, [socket]);
+    }, [socket, isRolling]); // added isRolling so handler sees latest rolling flag
+
+    // when rolling finishes, apply any buffered moves
+    useEffect(() => {
+      if (!isRolling && pendingMoves.length > 0) {
+        // apply buffered moves in order (usually there's only one)
+        pendingMoves.forEach((payload) => applyMovePayload(payload));
+        setPendingMoves([]);
+      }
+    }, [isRolling, pendingMoves]);
 
     // log when board actually updates
     useEffect(() => {
@@ -147,7 +169,17 @@ const GamePage = () => {
       {started && players && <div className=" w-[80%] flex items-center justify-center">
         <Board socket={socket} started={started} board={board} players={players}/>
       </div> }
-      <Sidebar socket={socket} started={started} board={board} players={players} self={self} roll={roll}/>
+      <Sidebar
+        socket={socket}
+        started={started}
+        board={board}
+        players={players}
+        self={self}
+        roll={roll}
+        isRolling={isRolling}
+        setIsRolling={setIsRolling}
+      />
+      {/* pass rolling state to Dice via Sidebar -> Dice: we'll provide isRolling control via Sidebar -> Dice */}
     </div>
   );
 };

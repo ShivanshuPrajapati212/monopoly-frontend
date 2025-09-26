@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { ROLL, GET_BOARD, GET_PLAYERS, GET_SELF } from "../utils/messages";
 
-const Dice = ({ socket, roll }) => {
+const Dice = ({ socket, roll, isRolling, setIsRolling }) => {
   const [dice1Value, setDice1Value] = useState((Array.isArray(roll) && roll[0]) || 1);
   const [dice2Value, setDice2Value] = useState((Array.isArray(roll) && roll[1]) || 1);
   const [targetDice1, setTargetDice1] = useState((Array.isArray(roll) && roll[0]) || 1);
   const [targetDice2, setTargetDice2] = useState((Array.isArray(roll) && roll[1]) || 1);
-  const [isRolling, setIsRolling] = useState(false);
 
   useEffect(() => {
     // keep targets in sync with incoming roll prop
@@ -53,15 +52,16 @@ const Dice = ({ socket, roll }) => {
     if (!socket) return;
 
     // request server to roll
-    socket.send(
-      JSON.stringify({
-        type: ROLL,
-      })
-    );
+    socket.send(JSON.stringify({ type: ROLL }));
 
-    setIsRolling(true);
+    // notify parent that animation starts (safe-call)
+    if (typeof setIsRolling === "function") setIsRolling(true);
+
+    // animate for ~2000ms with smoother ticks
+    const durationMs = 2000;
+    const tickMs = 80;
+    const maxRolls = Math.ceil(durationMs / tickMs);
     let rollCount = 0;
-    const maxRolls = 20;
 
     const rollInterval = setInterval(() => {
       setDice1Value(Math.floor(Math.random() * 6) + 1);
@@ -77,7 +77,9 @@ const Dice = ({ socket, roll }) => {
 
         setDice1Value(final1);
         setDice2Value(final2);
-        setIsRolling(false);
+
+        // end animation (safe-call)
+        if (typeof setIsRolling === "function") setIsRolling(false);
 
         // after animation finishes, request updated board/players/self from server
         // small delay to give server time to process the roll message
@@ -88,7 +90,7 @@ const Dice = ({ socket, roll }) => {
           socket.send(JSON.stringify({ type: GET_SELF }));
         }, 250);
       }
-    }, 100);
+    }, tickMs);
   };
 
   return (

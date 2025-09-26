@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BUY, INIT_GAME, ROLL } from "../utils/messages";
 import Dice from "./Dice";
 
-const Sidebar = ({ socket, started, board, players, self, roll }) => {
+const Sidebar = ({ socket, started, board, players, self, roll, isRolling, setIsRolling }) => {
   const nonBuyable = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
   const [selected, setSelected] = useState(0);
   return (
@@ -129,7 +129,7 @@ const Sidebar = ({ socket, started, board, players, self, roll }) => {
           ) : null;
         })()}
       {started && (
-        <Dice socket={socket} roll={roll}/>
+        <Dice socket={socket} roll={roll} isRolling={isRolling} setIsRolling={setIsRolling} />
       )}
     </div>
   );
